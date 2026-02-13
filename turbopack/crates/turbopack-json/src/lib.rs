@@ -11,9 +11,9 @@
 
 use std::fmt::Write;
 
-use anyhow::{Error, Result, bail};
+use anyhow::{Error, Result};
 use turbo_rcstr::rcstr;
-use turbo_tasks::{ResolvedVc, ValueToString, Vc};
+use turbo_tasks::{ResolvedVc, Vc, turbobail, turbofmt};
 use turbo_tasks_fs::{FileContent, FileJsonContent};
 use turbopack_core::{
     asset::Asset,
@@ -118,7 +118,7 @@ impl EcmascriptChunkPlaceable for JsonModuleAsset {
                     // `uri_from_file`) need to handle percent encoding correctly first.
                     //
                     // See turbopack/crates/turbopack-core/src/source_map/utils.rs as well
-                    "sources": [format!("turbopack:///{}", self.ident().path().to_string().await?)],
+                    "sources": [turbofmt!("turbopack:///{}", self.ident().path()).await?],
                     "sourcesContent": [&data_str],
                     "names": [],
                     // Maps 0:0 in the output code to 0:0 in the `source_code`. Sufficient for
@@ -149,7 +149,7 @@ impl EcmascriptChunkPlaceable for JsonModuleAsset {
                 Err(Error::msg(message))
             }
             FileJsonContent::NotFound => {
-                bail!("JSON file not found: {}", self.ident().to_string().await?);
+                turbobail!("JSON file not found: {}", self.ident());
             }
         }
     }
