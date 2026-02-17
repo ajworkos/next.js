@@ -2,10 +2,10 @@
 //!
 //! See `next/src/build/webpack/loaders/next-metadata-image-loader`
 
-use anyhow::{Result, bail};
+use anyhow::Result;
 use indoc::formatdoc;
 use turbo_rcstr::RcStr;
-use turbo_tasks::{ResolvedVc, Vc};
+use turbo_tasks::{ResolvedVc, Vc, turbobail};
 use turbo_tasks_fs::{File, FileContent, FileSystemPath};
 use turbo_tasks_hash::hash_xxh3_hash64;
 use turbopack_core::{
@@ -33,10 +33,7 @@ async fn hash_file_content(path: FileSystemPath) -> Result<u64> {
             hash_xxh3_hash64(&*content)
         }
         FileContent::NotFound => {
-            bail!(
-                "metadata file not found: {}",
-                &path.value_to_string().await?
-            );
+            turbobail!("metadata file not found: {}", path)
         }
     })
 }
