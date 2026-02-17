@@ -39,7 +39,10 @@ export function getDeterministicOutput(
     `at ${isMinified ? abc[a++ % abc.length] : name} (<next-dist-dir>)`
 
   const isLikelyLibraryInternalStackFrame = (line: string) => {
-    return line.startsWith('    at InnerLayoutRouter (')
+    return (
+      line.startsWith('    at InnerLayoutRouter (') ||
+      line.startsWith('    at Next.')
+    )
   }
 
   const replaceAnonymousStackFrame = (_m: string, name: string) => {

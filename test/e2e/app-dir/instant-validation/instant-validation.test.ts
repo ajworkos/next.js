@@ -417,6 +417,41 @@ describe('instant validation', () => {
       `)
     })
 
+    it('invalid - runtime prefetch - sync IO in runtime segment with valid static parent', async () => {
+      // The static parent layout has sync IO after cookies() which is fine
+      // because it's not runtime-prefetchable. But the page itself has
+      // runtime prefetch enabled and also has sync IO after cookies(),
+      // which should error.
+      const browser = await navigateTo(
+        '/suspense-in-root/runtime/invalid-sync-io-in-runtime-with-valid-static-parent'
+      )
+      await expect(browser).toDisplayCollapsedRedbox(`
+       {
+         "description": "Route "/suspense-in-root/runtime/invalid-sync-io-in-runtime-with-valid-static-parent" used \`Date.now()\` before accessing either uncached data (e.g. \`fetch()\`) or awaiting \`connection()\`. When configured for Runtime prefetching, accessing the current time in a Server Component requires reading one of these data sources first. Alternatively, consider moving this expression into a Client Component or Cache Component. See more info here: https://nextjs.org/docs/messages/next-prerender-runtime-current-time",
+         "environmentLabel": "Server",
+         "label": "Console Error",
+         "source": "app/suspense-in-root/runtime/invalid-sync-io-in-runtime-with-valid-static-parent/page.tsx (14:20) @ Page
+       > 14 |   const now = Date.now()
+            |                    ^",
+         "stack": [
+           "Page app/suspense-in-root/runtime/invalid-sync-io-in-runtime-with-valid-static-parent/page.tsx (14:20)",
+           "Page <anonymous>",
+         ],
+       }
+      `)
+    })
+
+    it('valid - runtime prefetch - sync IO in a static parent layout is allowed', async () => {
+      // Sync IO (Date.now()) in a layout that is NOT runtime-prefetchable
+      // should not error, even though the child page has runtime prefetch
+      // enabled. Only segments that are runtime-prefetchable should be
+      // validated for sync IO after runtime APIs.
+      const browser = await navigateTo(
+        '/suspense-in-root/runtime/valid-sync-io-in-static-parent'
+      )
+      await waitForNoErrorToast(browser)
+    })
+
     it('invalid - missing suspense around dynamic (with loading.js)', async () => {
       const browser = await navigateTo(
         '/suspense-in-root/static/invalid-only-loading-around-dynamic'
