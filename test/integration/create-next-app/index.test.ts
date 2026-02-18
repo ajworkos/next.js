@@ -127,7 +127,7 @@ describe('create-next-app', () => {
       projectFilesShouldExist({
         cwd,
         projectName,
-        files: ['AGENTS.md', 'CLAUDE.md'],
+        files: ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'],
       })
     })
   })
@@ -159,7 +159,7 @@ describe('create-next-app', () => {
       projectFilesShouldNotExist({
         cwd,
         projectName,
-        files: ['AGENTS.md', 'CLAUDE.md'],
+        files: ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'],
       })
     })
   })

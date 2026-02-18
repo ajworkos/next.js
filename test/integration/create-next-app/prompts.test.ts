@@ -203,6 +203,7 @@ describe('create-next-app prompts', () => {
               'tsconfig.json',
               'AGENTS.md',
               'CLAUDE.md',
+              'GEMINI.md',
             ],
           })
           resolve()
@@ -246,6 +247,7 @@ describe('create-next-app prompts', () => {
               'tsconfig.json', // typescript
               'AGENTS.md', // agent files
               'CLAUDE.md',
+              'GEMINI.md',
             ],
           })
           resolve()
