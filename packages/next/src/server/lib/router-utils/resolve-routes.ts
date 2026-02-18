@@ -474,6 +474,20 @@ export function getResolveRoutes(
               if (output.locale) {
                 addRequestMeta(req, 'locale', output.locale)
               }
+              if (
+                output.type === 'nextStaticFolder' &&
+                config.deploymentId &&
+                parsedUrl.query.dpl !== config.deploymentId
+              ) {
+                // Require ?dpl for _next/static files
+                console.log('abort')
+                return {
+                  finished: true,
+                  parsedUrl,
+                  resHeaders,
+                  matchedOutput: null,
+                }
+              }
               return {
                 parsedUrl,
                 resHeaders,
